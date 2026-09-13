@@ -6,6 +6,7 @@
 
 import { OverpassElement, OverpassResponse } from './ports/IOsmApi';
 import type { BusinessRecord } from '../domain/businessRecord';
+import { postcodeDistrict } from '../domain/postcode';
 
 // ── Pure helpers ───────────────────────────────────────────────────────────────
 
@@ -57,7 +58,7 @@ export function getElementCoords(
  */
 export function parseOverpassResponse(
   response: OverpassResponse,
-  postcodeDistrict: string,
+  fallbackPostcodeDistrict: string,
 ): BusinessRecord[] {
   if (!response.elements || response.elements.length === 0) {
     return [];
@@ -85,7 +86,10 @@ export function parseOverpassResponse(
       addressLine1,
       postcode,
       locality: null,
-      postcodeDistrict,
+      // OSM is fetched by a lat/lng radius, not a postcode filter — a POI
+      // can genuinely sit in a different district than the one searched
+      // for (e.g. Oldmixon/BS24 within radius of a BS23 centre).
+      postcodeDistrict: postcodeDistrict(postcode) ?? fallbackPostcodeDistrict,
       lat,
       lng,
       source: 'osm',

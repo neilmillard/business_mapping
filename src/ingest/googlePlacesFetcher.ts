@@ -6,6 +6,7 @@
  */
 
 import type { BusinessRecord } from '../domain/businessRecord';
+import { extractPostcode, postcodeDistrict as districtOf } from '../domain/postcode';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -30,7 +31,7 @@ export interface PlacesResponse {
  */
 export function parsePlacesResponse(
   response: PlacesResponse,
-  postcodeDistrict: string,
+  fallbackPostcodeDistrict: string,
 ): BusinessRecord[] {
   if (!response.places || response.places.length === 0) {
     return [];
@@ -43,6 +44,8 @@ export function parsePlacesResponse(
       businessStatus === 'CLOSED_PERMANENTLY' || businessStatus === 'CLOSED_TEMPORARILY' ? 'closed' :
       'unknown';
 
+    const postcode = extractPostcode(place.formattedAddress ?? null);
+
     return {
       id: `google_places:${place.id}`,
       companyNumber: null,
@@ -50,9 +53,14 @@ export function parsePlacesResponse(
       status,
       sicCodes: [],
       addressLine1: place.formattedAddress ?? null,
-      postcode: null,
+      postcode,
       locality: null,
-      postcodeDistrict,
+      // Places is fetched by a lat/lng radius, not a postcode filter, so a
+      // result can genuinely sit in a different district than the one we
+      // searched for (e.g. Oldmixon/BS24 within radius of a BS23 centre).
+      // Only fall back to the configured district when we can't read a
+      // real one off the address.
+      postcodeDistrict: districtOf(postcode) ?? fallbackPostcodeDistrict,
       lat: place.location?.latitude ?? null,
       lng: place.location?.longitude ?? null,
       source: 'google_places',

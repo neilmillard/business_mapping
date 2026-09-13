@@ -29,7 +29,7 @@ describe('parsePlacesResponse', () => {
         status: 'active',
         sicCodes: [],
         addressLine1: '1 High Street, Weston-super-Mare, BS23 1AA',
-        postcode: null,
+        postcode: 'BS23 1AA',
         locality: null,
         postcodeDistrict: 'BS23',
         lat: 51.345,
@@ -37,6 +37,38 @@ describe('parsePlacesResponse', () => {
         source: 'google_places',
       },
     ]);
+  });
+
+  it('derives the postcode district from the address even when it differs from the search area', () => {
+    const response: PlacesResponse = {
+      places: [
+        {
+          id: 'place-4',
+          displayName: { text: 'Oldmixon Trading Co' },
+          formattedAddress: 'Oldmixon Crescent, Weston-super-Mare, BS24 9AW, UK',
+          businessStatus: 'OPERATIONAL',
+        },
+      ],
+    };
+
+    const [record] = parsePlacesResponse(response, 'BS23');
+
+    expect(record.postcode).toBe('BS24 9AW');
+    expect(record.postcodeDistrict).toBe('BS24');
+  });
+
+  it('falls back to the search area district when the address has no postcode', () => {
+    const response: PlacesResponse = {
+      places: [
+        {
+          id: 'place-5',
+          displayName: { text: 'No Postcode Shop' },
+          businessStatus: 'OPERATIONAL',
+        },
+      ],
+    };
+
+    expect(parsePlacesResponse(response, 'BS23')[0].postcodeDistrict).toBe('BS23');
   });
 
   it('maps a closed place to status closed', () => {
