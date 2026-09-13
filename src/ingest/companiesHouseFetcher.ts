@@ -5,21 +5,10 @@
  */
 
 export type { CompanyItem, CompaniesHouseSearchResponse } from './ports/ICompaniesHouseApi';
+export type { BusinessRecord } from '../domain/businessRecord';
 
 import type { CompaniesHouseSearchResponse } from './ports/ICompaniesHouseApi';
-
-export interface BusinessRecord {
-  id: string;
-  companyNumber: string;
-  name: string;
-  status: string;
-  sicCodes: string[];
-  addressLine1: string | null;
-  postcode: string | null;
-  locality: string | null;
-  postcodeDistrict: string;
-  source: 'companies_house';
-}
+import type { BusinessRecord } from '../domain/businessRecord';
 
 /**
  * Maps a Companies House search response to BusinessRecord objects.
@@ -52,6 +41,8 @@ export function parseCompaniesToBusinessRecords(
       postcode: company.registered_office_address?.postal_code ?? null,
       locality: company.registered_office_address?.locality ?? null,
       postcodeDistrict,
+      lat: null,
+      lng: null,
       source: 'companies_house',
     });
   }
@@ -64,6 +55,9 @@ async function main(): Promise<void> {
   const fs = await import('fs');
   const path = await import('path');
   const yaml = await import('js-yaml');
+  const { CompaniesHouseApiAdapter } = await import('./adapters/companiesHouseApiAdapter');
+  const { CompaniesHouseFetchService } = await import('./services/companiesHouseFetchService');
+  const { writeRawRecords } = await import('./rawRecordsWriter');
 
   const apiKey = process.env.COMPANIES_HOUSE_API_KEY;
   if (!apiKey) {
@@ -83,7 +77,19 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  console.log(`Would fetch Companies House data for postcode districts: ${area.postcode_districts.join(', ')}`);
+  const refresh = process.argv.includes('--refresh');
+  const service = new CompaniesHouseFetchService(new CompaniesHouseApiAdapter());
+  const records: BusinessRecord[] = [];
+
+  for (const postcodeDistrict of area.postcode_districts) {
+    for (const status of ['active', 'dissolved'] as const) {
+      console.log(`Fetching Companies House data: ${postcodeDistrict} / ${status}…`);
+      records.push(...await service.fetchDistrict({ postcodeDistrict, status, apiKey, refresh }));
+    }
+  }
+
+  writeRawRecords('companies_house', areaSlug, records);
+  console.log(`Fetched ${records.length} companies for ${areaSlug}.`);
 }
 
 /* istanbul ignore next */

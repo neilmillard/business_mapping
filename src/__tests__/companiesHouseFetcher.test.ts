@@ -36,6 +36,8 @@ describe('parseCompaniesToBusinessRecords', () => {
         postcode: 'BS23 1AA',
         locality: 'Weston-super-Mare',
         postcodeDistrict: 'BS23',
+        lat: null,
+        lng: null,
         source: 'companies_house',
       },
     ]);
@@ -77,6 +79,8 @@ describe('parseCompaniesToBusinessRecords', () => {
         postcode: null,
         locality: null,
         postcodeDistrict: 'BS22',
+        lat: null,
+        lng: null,
         source: 'companies_house',
       },
     ]);

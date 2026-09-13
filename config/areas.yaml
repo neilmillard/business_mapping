@@ -3,3 +3,10 @@ areas:
     postcode_districts:
       - BS23
       - BS22
+    # Centre of the pilot area and search radius, used by places:fetch and
+    # osm:fetch (Companies House is postcode-district based and needs no
+    # centre point).
+    centre:
+      lat: 51.3459
+      lng: -2.9774
+    search_radius_m: 5000

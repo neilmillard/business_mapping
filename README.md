@@ -16,13 +16,18 @@ than demand/supply scoring.
 
 ```
 npm install
-cp .env.example .env   # fill in COMPANIES_HOUSE_API_KEY
+cp .env.example .env   # fill in COMPANIES_HOUSE_API_KEY and GOOGLE_MAPS_API_KEY
 ```
 
 ## Pipeline (planned stages)
 
-1. **Ingestion** — deduped business list for BS23/BS22 (Companies House +
-   OpenStreetMap). `npm run companies:fetch`.
+1. **Ingestion** — deduped business list for BS23/BS22 from three sources:
+   - `npm run companies:fetch` — Companies House (registered office in BS23/BS22)
+   - `npm run places:fetch` — Google Places, for businesses that never register
+     a limited company
+   - `npm run osm:fetch` — OpenStreetMap (Overpass), supplementary source
+   - `npm run census:build` — dedupes all three sources into
+     `reports/census_weston-super-mare.csv`
 2. **Classification** — inputs/outputs/services per business.
 3. **Relationship mapping** — business-to-business flows, import/export
    flagging.

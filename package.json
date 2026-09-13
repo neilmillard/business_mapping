@@ -6,6 +6,9 @@
   "scripts": {
     "ts-node": "node --env-file-if-exists=.env node_modules/ts-node/dist/bin.js",
     "companies:fetch": "npm run ts-node -- src/ingest/companiesHouseFetcher.ts",
+    "places:fetch": "npm run ts-node -- src/ingest/googlePlacesFetcher.ts",
+    "osm:fetch": "npm run ts-node -- src/ingest/overpassFetcher.ts",
+    "census:build": "npm run ts-node -- src/census/build.ts",
     "build": "tsc",
     "lint": "eslint src --ext .ts",
     "test": "jest"

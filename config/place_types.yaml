@@ -1,0 +1,32 @@
+# Broad place types / OSM tags used to enumerate businesses for the
+# pilot area's supplementary sources (Companies House is the primary,
+# exhaustive source; these fill in businesses that never register a
+# limited company, e.g. sole traders and market stalls).
+
+google_places_types:
+  - store
+  - restaurant
+  - cafe
+  - bar
+  - supermarket
+  - clothing_store
+  - hardware_store
+  - beauty_salon
+  - hair_care
+  - gym
+  - real_estate_agency
+  - lawyer
+  - accounting
+  - car_repair
+  - bakery
+
+osm_tags:
+  - shop
+  - office
+  - craft
+  - amenity=restaurant
+  - amenity=cafe
+  - amenity=bar
+  - amenity=pub
+  - amenity=pharmacy
+  - amenity=bank

@@ -3,4 +3,5 @@ dist/
 coverage/
 .env
 data/raw/
+data/parsed/
 reports/*.csv

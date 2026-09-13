@@ -2,6 +2,7 @@ export interface SearchCompaniesParams {
   postcodeDistrict: string;
   status: 'active' | 'dissolved';
   apiKey: string;
+  refresh: boolean;
   startIndex?: number;
 }
 
