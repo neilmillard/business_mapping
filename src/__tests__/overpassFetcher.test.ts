@@ -5,7 +5,7 @@ describe('buildOverpassQuery', () => {
   it('builds an Overpass QL query for the given tags and bounding circle', () => {
     const query = buildOverpassQuery(['shop'], 51.345, -2.977, 1500);
 
-    expect(query).toContain('[out:json][timeout:25];');
+    expect(query).toContain('[out:json][timeout:60];');
     expect(query).toContain('node["shop"](around:1500,51.345,-2.977);');
     expect(query).toContain('way["shop"](around:1500,51.345,-2.977);');
     expect(query).toContain('relation["shop"](around:1500,51.345,-2.977);');

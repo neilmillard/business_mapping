@@ -33,7 +33,7 @@ export function buildOverpassQuery(
     })
     .join('\n');
 
-  return `[out:json][timeout:25];\n(\n${filters}\n);\nout center;`;
+  return `[out:json][timeout:60];\n(\n${filters}\n);\nout center;`;
 }
 
 /**
