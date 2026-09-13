@@ -1,0 +1,52 @@
+{
+  "name": "business_mapping",
+  "version": "0.1.0",
+  "description": "Business input/output/relationship mapping for local areas (pilot: BS23/BS22, Weston-super-Mare)",
+  "main": "dist/index.js",
+  "scripts": {
+    "ts-node": "node --env-file-if-exists=.env node_modules/ts-node/dist/bin.js",
+    "companies:fetch": "npm run ts-node -- src/ingest/companiesHouseFetcher.ts",
+    "build": "tsc",
+    "lint": "eslint src --ext .ts",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "Neil",
+  "license": "UNLICENSED",
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.test.ts"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/**/__tests__/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 80,
+        "branches": 80,
+        "functions": 80,
+        "lines": 80
+      }
+    }
+  },
+  "dependencies": {
+    "js-yaml": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^26.1.1",
+    "eslint": "^10.7.0",
+    "jest": "^30.4.2",
+    "ts-jest": "^29.4.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.65.0"
+  }
+}
