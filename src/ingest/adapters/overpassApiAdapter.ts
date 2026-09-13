@@ -25,16 +25,24 @@ export function httpPostQuery<T>(url: string, query: string): Promise<T> {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Content-Length': Buffer.byteLength(payload),
+          // overpass-api.de's Apache front-end returns 406 Not Acceptable
+          // for requests with no User-Agent header — Node's https.request
+          // sends none by default, unlike curl or a browser.
+          'User-Agent': 'business_mapping-ingest/0.1 (+https://github.com/neilmillard/business_mapping)',
         },
       },
       (res) => {
         let body = '';
         res.on('data', (chunk: Buffer) => { body += chunk.toString(); });
         res.on('end', () => {
+          if (res.statusCode && res.statusCode >= 400) {
+            reject(new Error(`HTTP ${res.statusCode} from Overpass API: ${body.slice(0, 200)}`));
+            return;
+          }
           try {
             resolve(JSON.parse(body) as T);
           } catch (err) {
-            reject(new Error(`Failed to parse JSON response: ${(err as Error).message}`));
+            reject(new Error(`Failed to parse JSON response (status ${res.statusCode}): ${(err as Error).message}`));
           }
         });
       },
