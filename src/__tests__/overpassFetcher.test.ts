@@ -5,7 +5,7 @@ describe('buildOverpassQuery', () => {
   it('builds an Overpass QL query for the given tags and bounding circle', () => {
     const query = buildOverpassQuery(['shop'], 51.345, -2.977, 1500);
 
-    expect(query).toContain('[out:json][timeout:25];');
+    expect(query).toContain('[out:json][timeout:60];');
     expect(query).toContain('node["shop"](around:1500,51.345,-2.977);');
     expect(query).toContain('way["shop"](around:1500,51.345,-2.977);');
     expect(query).toContain('relation["shop"](around:1500,51.345,-2.977);');
@@ -91,5 +91,23 @@ describe('parseOverpassResponse', () => {
     };
 
     expect(parseOverpassResponse(response, 'BS23')[0].addressLine1).toBe('High Street');
+  });
+
+  it('derives the postcode district from the tag even when it differs from the search area', () => {
+    const response: OverpassResponse = {
+      elements: [
+        { type: 'node', id: 8, lat: 51.32, lon: -2.96, tags: { name: 'Oldmixon Trading Co', 'addr:postcode': 'BS24 9AW' } },
+      ],
+    };
+
+    expect(parseOverpassResponse(response, 'BS23')[0].postcodeDistrict).toBe('BS24');
+  });
+
+  it('falls back to the search area district when the element has no postcode tag', () => {
+    const response: OverpassResponse = {
+      elements: [{ type: 'node', id: 9, lat: 51.1, lon: -2.9, tags: { name: 'No Postcode Shop' } }],
+    };
+
+    expect(parseOverpassResponse(response, 'BS23')[0].postcodeDistrict).toBe('BS23');
   });
 });

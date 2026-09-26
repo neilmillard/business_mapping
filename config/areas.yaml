@@ -3,10 +3,13 @@ areas:
     postcode_districts:
       - BS23
       - BS22
+      - BS24
     # Centre of the pilot area and search radius, used by places:fetch and
     # osm:fetch (Companies House is postcode-district based and needs no
-    # centre point).
+    # centre point). 6km comfortably covers BS24's Weston-super-Mare-side
+    # settlements (Oldmixon, Locking, West Wick, Hutton, Bleadon) without
+    # reaching its outlying hamlets (e.g. Lympsham, ~9.5km out).
     centre:
       lat: 51.3459
       lng: -2.9774
-    search_radius_m: 5000
+    search_radius_m: 6000
